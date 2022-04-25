@@ -1,7 +1,7 @@
 # Проект «Киноман»
 
 * Студент: [Dmitry Novikov](https://up.htmlacademy.ru/ecmascript/17/user/2002423).
-* Наставник: `Неизвестно`.
+* Наставник: [Ирина Серышева](https://htmlacademy.ru/profile/id2070039).
 
 ---
 
