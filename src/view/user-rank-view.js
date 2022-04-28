@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import BaseTemplateView from './base-template-view.js';
 
 const getUserRankTemplate = () => (`
   <section class="header__profile profile">
@@ -7,20 +7,9 @@ const getUserRankTemplate = () => (`
   </section>
 `);
 
-export default class UserRankView {
+export default class UserRankView extends BaseTemplateView {
 
-  getTemplate() {
-    return getUserRankTemplate;
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+  constructor() {
+    super(getUserRankTemplate());
   }
 }

@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import BaseTemplateView from './base-template-view.js';
 
 const getFilmListTemplate = () => (`
   <section class="films-list">
@@ -6,21 +6,9 @@ const getFilmListTemplate = () => (`
   </section>
 `);
 
-export default class FilmListView {
+export default class FilmListView extends BaseTemplateView {
 
-  getTemplate() {
-    return getFilmListTemplate;
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+  constructor() {
+    super(getFilmListTemplate());
   }
 }

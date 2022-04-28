@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import BaseTemplateView from './base-template-view.js';
 
 const getFilmListContainerTemplate = () => (`
   <div class="films-list__container">
@@ -6,20 +6,9 @@ const getFilmListContainerTemplate = () => (`
   </div>
 `);
 
-export default class FilmListContainerView {
+export default class FilmListContainerView extends BaseTemplateView {
 
-  getTemplate() {
-    return getFilmListContainerTemplate;
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+  constructor() {
+    super(getFilmListContainerTemplate());
   }
 }

@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import BaseTemplateView from './base-template-view.js';
 
 const getFilmDetailsPopupTemplate = () => (`
   <section class="film-details">
@@ -167,20 +167,9 @@ const getFilmDetailsPopupTemplate = () => (`
   </section>
 `);
 
-export default class FilmDetailsPopupView {
+export default class FilmDetailsPopupView extends BaseTemplateView {
 
-  getTemplate() {
-    return getFilmDetailsPopupTemplate;
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+  constructor() {
+    super(getFilmDetailsPopupTemplate());
   }
 }

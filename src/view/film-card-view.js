@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import BaseTemplateView from './base-template-view.js';
 
 const getCardTemplate = () => (`
   <article class="film-card">
@@ -22,20 +22,9 @@ const getCardTemplate = () => (`
   </article>
 `);
 
-export default class FilmCardView {
+export default class FilmCardView extends BaseTemplateView {
 
-  getTemplate() {
-    return getCardTemplate;
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+  constructor() {
+    super(getCardTemplate());
   }
 }
