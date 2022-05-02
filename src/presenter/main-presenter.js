@@ -10,13 +10,15 @@ export default class MainPresenter {
 
   filmListView = new FilmListView();
   filmListContainerView = new FilmListContainerView();
-  init = (container) => {
+  init = (container, filmModel) => {
+    this.filmModel = filmModel;
+    this.films = [...this.filmModel.getFilms()];
     render(new FilterView(), container);
     render(new SortView(), container);
     render(this.filmListView, container);
     render(this.filmListContainerView, this.filmListView.getElement());
     for (let i = 0; i < 5; i++) {
-      render(new FilmCardView(), this.filmListContainerView.getElement());
+      render(new FilmCardView(this.films[i]), this.filmListContainerView.getElement());
     }
     render(new ShowMoreBtnView(), container);
   };
