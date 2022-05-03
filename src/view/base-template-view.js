@@ -2,22 +2,25 @@ import { createElement } from '../render.js';
 
 export default class BaseTemplateView {
 
+  #template = null;
+  #element = null;
+
   constructor(template) {
-    this.template = template;
+    this.#template = template;
   }
 
-  getTemplate() {
-    return this.template;
+  get template() {
+    return this.#template;
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.#template);
     }
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

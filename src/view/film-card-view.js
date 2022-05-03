@@ -30,8 +30,10 @@ const getCardTemplate = (film) => (`
 
 export default class FilmCardView extends BaseTemplateView {
 
+  #film = null;
+
   constructor(film) {
     super(getCardTemplate(film));
-    this.film = film;
+    this.#film = film;
   }
 }

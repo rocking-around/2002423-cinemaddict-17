@@ -143,4 +143,20 @@ export default class FilmDetailsPopupView extends BaseTemplateView {
   constructor(film, comments) {
     super(getFilmDetailsPopupTemplate(film, comments));
   }
+
+  static getCardElementByLinkChildElement(linkChildElement) {
+    const cardLinkElement = linkChildElement.closest('.film-card__link');
+    if(cardLinkElement) {
+      return cardLinkElement.parentElement;
+    }
+    return null;
+  }
+
+  static getFilmDetailsElement() {
+    return document.querySelector('.film-details');
+  }
+
+  getCloseBtnElement() {
+    return this.element.querySelector('.film-details__close-btn');
+  }
 }
