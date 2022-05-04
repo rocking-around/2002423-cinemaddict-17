@@ -6,20 +6,20 @@ import ShowMoreBtnView from '../view/show-more-btn-view';
 import FilmCardView from '../view/film-card-view';
 import FilmDetailsPopupView from '../view/film-details-popup-view';
 import { render } from '../render.js';
-import { listToMap, isEscapeKey } from '../utils';
+import { listToMap, mapValuesToList, isEscapeKey } from '../utils';
 
 export default class MainPresenter {
 
   #filmListView = new FilmListView();
   #filmListContainerView = new FilmListContainerView();
   #filmModel = null;
-  #filmById = null;
+  #filmsById = null;
   #container = null;
 
   init = (container, filmModel) => {
     this.#container = container;
     this.#filmModel = filmModel;
-    this.#filmById = listToMap(this.#filmModel.films, (object) => object.id.toString());
+    this.#filmsById = listToMap(this.#filmModel.films, (object) => object.id.toString());
     render(new FilterView(), container);
     render(new SortView(), container);
     this.#renderFilmCardList();
@@ -36,8 +36,9 @@ export default class MainPresenter {
     this.#filmListView.element.addEventListener('click', onCardsListClick);
     render(this.#filmListView, this.#container);
     render(this.#filmListContainerView, this.#filmListView.element);
+    const filmsByIdValues = mapValuesToList(this.#filmsById);
     for (let i = 0; i < 5; i++) {
-      this.#renderFilmCard(Array.from(this.#filmById.values())[i], this.#filmListContainerView.element);
+      this.#renderFilmCard(filmsByIdValues[i], this.#filmListContainerView.element);
     }
   }
 
@@ -53,20 +54,20 @@ export default class MainPresenter {
         this.#closePopup();
       }
     };
-    const film = this.#filmById.get(cardElement.dataset.id);
+    const film = this.#filmsById.get(cardElement.dataset.id);
     const comments = [...this.#filmModel.getCommentsByFilmId(film.id)];
     const filmDetailPopupComponent = new FilmDetailsPopupView(film, comments);
     document.addEventListener(
       'keydown',
       document.escKeyDownEvt = (evt) => onPageKeyDown(evt)
     );
-    filmDetailPopupComponent.getCloseBtnElement().addEventListener('click', this.#closePopup);
+    filmDetailPopupComponent.closeBtnElement.addEventListener('click', this.#closePopup);
     document.body.classList.add('hide-overflow');
     document.body.appendChild(filmDetailPopupComponent.element);
   }
 
   #closePopup() {
-    document.body.removeChild(FilmDetailsPopupView.getFilmDetailsElement());
+    document.body.removeChild(FilmDetailsPopupView.filmDetailsElement);
     document.body.classList.remove('hide-overflow');
     document.removeEventListener('keydown', document.escKeyDownEvt);
   }

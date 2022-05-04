@@ -29,8 +29,12 @@ const listToMap = (list, keyGetter) => {
   return map;
 };
 
+const mapValuesToList = (map) => (
+  Array.from(map.values())
+);
+
 const isEscapeKey = (evt) => (
   evt.key === 'Escape'
 );
 
-export { getRandomInteger, getRandomDate, humanizeFilmRuntime, humanizeFilmReleaseDate, humanizeFilmCommentDate, listToMap, isEscapeKey };
+export { getRandomInteger, getRandomDate, humanizeFilmRuntime, humanizeFilmReleaseDate, humanizeFilmCommentDate, listToMap, mapValuesToList, isEscapeKey };

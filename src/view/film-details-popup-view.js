@@ -152,11 +152,11 @@ export default class FilmDetailsPopupView extends BaseTemplateView {
     return null;
   }
 
-  static getFilmDetailsElement() {
+  static get filmDetailsElement() {
     return document.querySelector('.film-details');
   }
 
-  getCloseBtnElement() {
+  get closeBtnElement() {
     return this.element.querySelector('.film-details__close-btn');
   }
 }
