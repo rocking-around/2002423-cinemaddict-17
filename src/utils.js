@@ -21,4 +21,20 @@ const getRandomDate = (minYear, maxYear) => {
   return date;
 };
 
-export { getRandomInteger, getRandomDate, humanizeFilmRuntime, humanizeFilmReleaseDate, humanizeFilmCommentDate };
+const listToMap = (list, keyGetter) => {
+  const map = new Map();
+  list.forEach((item) => {
+    map.set(keyGetter(item), item);
+  });
+  return map;
+};
+
+const mapValuesToList = (map) => (
+  Array.from(map.values())
+);
+
+const isEscapeKey = (evt) => (
+  evt.key === 'Escape'
+);
+
+export { getRandomInteger, getRandomDate, humanizeFilmRuntime, humanizeFilmReleaseDate, humanizeFilmCommentDate, listToMap, mapValuesToList, isEscapeKey };
