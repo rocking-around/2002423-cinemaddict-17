@@ -8,10 +8,14 @@ import FilmDetailsPopupView from '../view/film-details-popup-view';
 import { render } from '../render.js';
 import { listToMap, mapValuesToList, isEscapeKey } from '../utils';
 
+const MAX_FILMS_COUNT_AT_ONCE = 5;
+
 export default class MainPresenter {
 
   #filmListView = new FilmListView();
   #filmListContainerView = new FilmListContainerView();
+  #showMoreBtnView = new ShowMoreBtnView();
+  #renderedFilmsCount = 0;
   #filmModel = null;
   #filmsById = null;
   #container = null;
@@ -23,7 +27,6 @@ export default class MainPresenter {
     render(new FilterView(), container);
     render(new SortView(), container);
     this.#renderFilmCardList();
-    render(new ShowMoreBtnView(), container);
   };
 
   #renderFilmCardList() {
@@ -37,8 +40,14 @@ export default class MainPresenter {
     render(this.#filmListView, this.#container);
     render(this.#filmListContainerView, this.#filmListView.element);
     const filmsByIdValues = mapValuesToList(this.#filmsById);
-    for (let i = 0; i < 5; i++) {
-      this.#renderFilmCard(filmsByIdValues[i], this.#filmListContainerView.element);
+    if (filmsByIdValues.length > MAX_FILMS_COUNT_AT_ONCE) {
+      this.#showMoreBtnView.element.addEventListener('click', () => this.#onShowMoreBtnClick(filmsByIdValues));
+      render(this.#showMoreBtnView, this.#container);
+    }
+    if (filmsByIdValues.length > 0) {
+      this.#onShowMoreBtnClick(filmsByIdValues);
+    } else {
+      this.#filmListView.showEmtyFilmListMessage();
     }
   }
 
@@ -71,4 +80,15 @@ export default class MainPresenter {
     document.body.classList.remove('hide-overflow');
     document.removeEventListener('keydown', document.escKeyDownEvt);
   }
+
+  #onShowMoreBtnClick = (films) => {
+    const maxPossibleCount = this.#renderedFilmsCount + MAX_FILMS_COUNT_AT_ONCE;
+    for (let i = this.#renderedFilmsCount; i < films.length && i < maxPossibleCount; i++) {
+      this.#renderFilmCard(films[i], this.#filmListContainerView.element);
+    }
+    this.#renderedFilmsCount += MAX_FILMS_COUNT_AT_ONCE;
+    if (this.#renderedFilmsCount >= films.length) {
+      this.#showMoreBtnView.element.remove();
+    }
+  };
 }
