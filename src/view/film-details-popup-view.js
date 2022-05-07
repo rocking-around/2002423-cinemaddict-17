@@ -146,7 +146,7 @@ export default class FilmDetailsPopupView extends BaseTemplateView {
 
   static getCardElementByLinkChildElement(linkChildElement) {
     const cardLinkElement = linkChildElement.closest('.film-card__link');
-    if(cardLinkElement) {
+    if (cardLinkElement) {
       return cardLinkElement.parentElement;
     }
     return null;
