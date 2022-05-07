@@ -5,7 +5,7 @@ import FilmListContainerView from '../view/film-list-container-view';
 import ShowMoreBtnView from '../view/show-more-btn-view';
 import FilmCardView from '../view/film-card-view';
 import FilmDetailsPopupView from '../view/film-details-popup-view';
-import { render } from '../render.js';
+import { render, RenderPosition } from '../render.js';
 import { listToMap, mapValuesToList, isEscapeKey } from '../utils';
 
 const MAX_FILMS_COUNT_AT_ONCE = 5;
@@ -15,6 +15,7 @@ export default class MainPresenter {
   #filmListView = new FilmListView();
   #filmListContainerView = new FilmListContainerView();
   #showMoreBtnView = new ShowMoreBtnView();
+  #filterView = new FilterView();
   #renderedFilmsCount = 0;
   #filmModel = null;
   #filmsById = null;
@@ -24,8 +25,7 @@ export default class MainPresenter {
     this.#container = container;
     this.#filmModel = filmModel;
     this.#filmsById = listToMap(this.#filmModel.films, (object) => object.id.toString());
-    render(new FilterView(), container);
-    render(new SortView(), container);
+    render(this.#filterView, container);
     this.#renderFilmCardList();
   };
 
@@ -46,9 +46,10 @@ export default class MainPresenter {
     }
     if (filmsByIdValues.length > 0) {
       this.#onShowMoreBtnClick(filmsByIdValues);
-    } else {
-      this.#filmListView.showEmtyFilmListMessage();
+      render(new SortView(), this.#filterView.element, RenderPosition.AFTEREND);
+      return;
     }
+    this.#filmListView.showEmptyFilmListMessage();
   }
 
   #renderFilmCard = (film, filmContainerElement) => {
@@ -82,12 +83,12 @@ export default class MainPresenter {
   }
 
   #onShowMoreBtnClick = (films) => {
-    const maxPossibleCount = this.#renderedFilmsCount + MAX_FILMS_COUNT_AT_ONCE;
-    for (let i = this.#renderedFilmsCount; i < films.length && i < maxPossibleCount; i++) {
+    const maxPossibleCount = Math.min(films.length, this.#renderedFilmsCount + MAX_FILMS_COUNT_AT_ONCE);
+    for (let i = this.#renderedFilmsCount; i < maxPossibleCount; i++) {
       this.#renderFilmCard(films[i], this.#filmListContainerView.element);
+      this.#renderedFilmsCount++;
     }
-    this.#renderedFilmsCount += MAX_FILMS_COUNT_AT_ONCE;
-    if (this.#renderedFilmsCount >= films.length) {
+    if (this.#renderedFilmsCount === films.length) {
       this.#showMoreBtnView.element.remove();
     }
   };

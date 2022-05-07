@@ -12,7 +12,7 @@ export default class FilmListView extends BaseTemplateView {
     super(getFilmListTemplate());
   }
 
-  showEmtyFilmListMessage() {
-    return this.element.querySelector('.films-list__title').classList.remove('visually-hidden');
+  showEmptyFilmListMessage() {
+    this.element.querySelector('.films-list__title').classList.remove('visually-hidden');
   }
 }
