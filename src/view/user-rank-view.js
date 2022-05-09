@@ -1,4 +1,4 @@
-import BaseTemplateView from './base-template-view.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const getUserRankTemplate = () => (`
   <section class="header__profile profile">
@@ -7,9 +7,9 @@ const getUserRankTemplate = () => (`
   </section>
 `);
 
-export default class UserRankView extends BaseTemplateView {
+export default class UserRankView extends AbstractView {
 
-  constructor() {
-    super(getUserRankTemplate());
+  get template() {
+    return getUserRankTemplate();
   }
 }

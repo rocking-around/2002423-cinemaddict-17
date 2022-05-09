@@ -1,4 +1,4 @@
-import BaseTemplateView from './base-template-view.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const getFilterTemplate = () => (`
   <nav class="main-navigation">
@@ -9,9 +9,9 @@ const getFilterTemplate = () => (`
   </nav>
 `);
 
-export default class FilterView extends BaseTemplateView {
+export default class FilterView extends AbstractView {
 
-  constructor() {
-    super(getFilterTemplate());
+  get template() {
+    return getFilterTemplate();
   }
 }
