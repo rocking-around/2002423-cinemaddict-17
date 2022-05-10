@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { humanizeFilmReleaseDate, humanizeFilmCommentDate } from '../utils.js';
+import { humanizeFilmReleaseDate, humanizeFilmCommentDate } from '../utils/film.js';
 
 const getGenres = (film) => (
   Array.from(film.genres).map((genre) => `<span class="film-details__genre">${genre}</span>`).join('')

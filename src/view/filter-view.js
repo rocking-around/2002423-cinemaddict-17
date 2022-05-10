@@ -1,17 +1,35 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
-const getFilterTemplate = () => (`
-  <nav class="main-navigation">
-    <a href="#all" class="main-navigation__item main-navigation__item--active">All movies</a>
-    <a href="#watchlist" class="main-navigation__item">Watchlist <span class="main-navigation__item-count">13</span></a>
-    <a href="#history" class="main-navigation__item">History <span class="main-navigation__item-count">4</span></a>
-    <a href="#favorites" class="main-navigation__item">Favorites <span class="main-navigation__item-count">8</span></a>
-  </nav>
+const getCountElement = (filter) => (
+  filter.count >= 0 ? `<span class="main-navigation__item-count">${filter.count}</span>` : ''
+);
+
+const createFilterItemTemplate = (filter, isActive) => (`
+  <a href="${filter.url}" class="main-navigation__item ${isActive ? 'main-navigation__item--active' : ''}">
+    ${filter.name}
+    ${getCountElement(filter)}
+  </a>
 `);
+
+const getFilterTemplate = (filterItems) => {
+  const filterItemsTemplate = filterItems
+    .map((filter, index) => createFilterItemTemplate(filter, index === 0))
+    .join('');
+  return `<nav class="main-navigation">
+    ${filterItemsTemplate}
+  </nav>`;
+};
 
 export default class FilterView extends AbstractView {
 
+  #template = null;
+
+  constructor(filters) {
+    super();
+    this.#template = getFilterTemplate(filters);
+  }
+
   get template() {
-    return getFilterTemplate();
+    return this.#template;
   }
 }

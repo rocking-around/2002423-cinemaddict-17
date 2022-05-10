@@ -1,4 +1,5 @@
-import { getRandomInteger, getRandomDate, humanizeFilmRuntime } from '../utils.js';
+import { humanizeFilmRuntime } from '../utils/film.js';
+import { getRandomInteger, getRandomDate } from '../utils/common.js';
 import { faker } from '@faker-js/faker';
 
 const posterByTitle = new Map([
@@ -103,7 +104,13 @@ export const generateFilm = (id) => {
       writers: new Set(getRandomPeopleList()),
       actors: new Set(getRandomPeopleList()),
       country: countryList[getRandomInteger(0, countryList.length - 1)],
-      ageRestriction: ageRestrictionList[getRandomInteger(0, ageRestrictionList.length -1)]
+      ageRestriction: ageRestrictionList[getRandomInteger(0, ageRestrictionList.length -1)],
+      userDetails: {
+        watchlist: Boolean(getRandomInteger(0, 1)),
+        alreadyWatched: Boolean(getRandomInteger(0, 1)),
+        watchingDate: getRandomDate(1941, 2022),
+        favorite: Boolean(getRandomInteger(0, 1))
+      }
     }
   );
 };
