@@ -1,17 +1,19 @@
 import FilmModel from './model/film-model';
-import FooterPresenter from './presenter/footer-presenter';
 import HeaderPresenter from './presenter/header-presenter';
 import MainPresenter from './presenter/main-presenter';
+import FooterStatisticsView from './view/footer-statistics-view.js';
+import FilterView from './view/filter-view';
 import { generateFilter } from './mock/filter.js';
+import { render } from './framework/render.js';
 
 const siteHeaderElement = document.querySelector('.header');
 const siteMainElement = document.querySelector('.main');
-const siteFooterElement = document.querySelector('.footer');
+const siteFooterStatisticsElement = document.querySelector('.footer .footer__statistics');
 const headerPresenter = new HeaderPresenter();
 const mainPresenter = new MainPresenter();
-const footerPresenter = new FooterPresenter();
 const filmModel = new FilmModel();
 
 headerPresenter.init(siteHeaderElement);
-mainPresenter.init(siteMainElement, filmModel, generateFilter(filmModel.films));
-footerPresenter.init(siteFooterElement, filmModel.films.length);
+render(new FilterView(generateFilter(filmModel.films)), siteMainElement);
+mainPresenter.init(siteMainElement, filmModel);
+render(new FooterStatisticsView(filmModel.films.length), siteFooterStatisticsElement);

@@ -1,4 +1,3 @@
-import FilterView from '../view/filter-view';
 import SortView from '../view/sort-view';
 import FilmListView from '../view/film-list-view';
 import ShowMoreBtnView from '../view/show-more-btn-view';
@@ -15,18 +14,15 @@ export default class MainPresenter {
 
   #filmListView = new FilmListView();
   #showMoreBtnView = new ShowMoreBtnView();
-  #filterView = null;
   #renderedFilmsCount = 0;
   #filmModel = null;
   #filmsById = null;
   #container = null;
 
-  init = (container, filmModel, filters) => {
+  init = (container, filmModel) => {
     this.#container = container;
     this.#filmModel = filmModel;
     this.#filmsById = listToMap(this.#filmModel.films, (object) => object.id.toString());
-    this.#filterView = new FilterView(filters);
-    render(this.#filterView, container);
     this.#renderFilmCardList();
   };
 
@@ -40,7 +36,7 @@ export default class MainPresenter {
     }
     if (filmsByIdValues.length > 0) {
       this.#onShowMoreBtnClick(filmsByIdValues);
-      render(new SortView(), this.#filterView.element, RenderPosition.AFTEREND);
+      render(new SortView(), this.#filmListView.filmsElement, RenderPosition.BEFOREBEGIN);
       this.#renderExtraFilmList('Top rated', this.#filmModel.topRatedFilms.slice(0, MAX_EXTRA_FILM_COUNT));
       this.#renderExtraFilmList('Most commented', this.#filmModel.mostCommentedFilms.slice(0, MAX_EXTRA_FILM_COUNT));
       return;
