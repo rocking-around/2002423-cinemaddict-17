@@ -1,19 +1,19 @@
-import FilterView from '../view/filter-view';
 import SortView from '../view/sort-view';
 import FilmListView from '../view/film-list-view';
 import ShowMoreBtnView from '../view/show-more-btn-view';
 import FilmCardView from '../view/film-card-view';
 import FilmDetailsPopupView from '../view/film-details-popup-view';
+import ExtraFilmListView from '../view/extra-film-list-view.js';
 import { render, RenderPosition } from '../framework/render.js';
-import { listToMap, mapValuesToList, isEscapeKey } from '../utils';
+import { listToMap, mapValuesToList, isEscapeKey } from '../utils/common.js';
 
 const MAX_FILMS_COUNT_AT_ONCE = 5;
+const MAX_EXTRA_FILM_COUNT = 2;
 
 export default class MainPresenter {
 
   #filmListView = new FilmListView();
   #showMoreBtnView = new ShowMoreBtnView();
-  #filterView = new FilterView();
   #renderedFilmsCount = 0;
   #filmModel = null;
   #filmsById = null;
@@ -23,7 +23,6 @@ export default class MainPresenter {
     this.#container = container;
     this.#filmModel = filmModel;
     this.#filmsById = listToMap(this.#filmModel.films, (object) => object.id.toString());
-    render(this.#filterView, container);
     this.#renderFilmCardList();
   };
 
@@ -33,21 +32,35 @@ export default class MainPresenter {
     const filmsByIdValues = mapValuesToList(this.#filmsById);
     if (filmsByIdValues.length > MAX_FILMS_COUNT_AT_ONCE) {
       this.#showMoreBtnView.setClickHandler(() => this.#onShowMoreBtnClick(filmsByIdValues));
-      render(this.#showMoreBtnView, this.#container);
+      render(this.#showMoreBtnView, this.#filmListView.filmListElement);
     }
     if (filmsByIdValues.length > 0) {
       this.#onShowMoreBtnClick(filmsByIdValues);
-      render(new SortView(), this.#filterView.element, RenderPosition.AFTEREND);
+      render(new SortView(), this.#filmListView.filmsElement, RenderPosition.BEFOREBEGIN);
+      this.#renderExtraFilmList('Top rated', this.#filmModel.topRatedFilms.slice(0, MAX_EXTRA_FILM_COUNT));
+      this.#renderExtraFilmList('Most commented', this.#filmModel.mostCommentedFilms.slice(0, MAX_EXTRA_FILM_COUNT));
       return;
     }
     this.#filmListView.showEmptyFilmListMessage();
   }
 
-  #renderFilmCard = (film, filmContainerElement) => {
+  #renderExtraFilmList(title, films) {
+    if (films.length === 0) {
+      return;
+    }
+    const view = new ExtraFilmListView(title);
+    render(view, this.#filmListView.filmsElement);
+    films.forEach((film) => {
+      this.#renderExtraFilms(film, view.filmListContainer);
+    });
+  }
+
+  #renderExtraFilms = (film, filmContainerElement) => {
     render(new FilmCardView(film), filmContainerElement);
   };
 
   #openPopup(cardElement) {
+    this.#closePopup();
     const onPageKeyDown = (evt) => {
       if (isEscapeKey(evt)) {
         this.#closePopup();
@@ -66,6 +79,9 @@ export default class MainPresenter {
   }
 
   #closePopup() {
+    if (!document.body.contains(FilmDetailsPopupView.filmDetailsElement)) {
+      return;
+    }
     document.body.removeChild(FilmDetailsPopupView.filmDetailsElement);
     document.body.classList.remove('hide-overflow');
     document.removeEventListener('keydown', document.escKeyDownEvt);
@@ -74,7 +90,7 @@ export default class MainPresenter {
   #onShowMoreBtnClick = (films) => {
     const maxPossibleCount = Math.min(films.length, this.#renderedFilmsCount + MAX_FILMS_COUNT_AT_ONCE);
     for (let i = this.#renderedFilmsCount; i < maxPossibleCount; i++) {
-      this.#renderFilmCard(films[i], this.#filmListView.filmListContainer);
+      this.#renderExtraFilms(films[i], this.#filmListView.filmListContainer);
       this.#renderedFilmsCount++;
     }
     if (this.#renderedFilmsCount === films.length) {

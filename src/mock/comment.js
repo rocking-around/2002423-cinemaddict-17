@@ -1,4 +1,4 @@
-import { getRandomInteger, getRandomDate } from '../utils.js';
+import { getRandomInteger, getRandomDate } from '../utils/common.js';
 import { faker } from '@faker-js/faker';
 
 const emojiList = [
