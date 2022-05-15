@@ -31,4 +31,21 @@ const isEscapeKey = (evt) => (
   evt.key === 'Escape'
 );
 
-export { getRandomInteger, getRandomDate, listToMap, mapValuesToList, isEscapeKey };
+const updateItem = (items, update) => {
+  console.log('update watchlist', update.userDetails.watchlist);
+  console.log('update alreadyWatched', update.userDetails.alreadyWatched);
+  console.log('update favorite', update.userDetails.favorite);
+  console.log('update watchlist', update.userDetails.watchlist);
+  const index = items.findIndex((item) => item.id === update.id);
+  if (index === -1) {
+    console.log('-1');
+    return items;
+  }
+  return [
+    ...items.slice(0, index),
+    update,
+    ...items.slice(index + 1),
+  ];
+};
+
+export { getRandomInteger, getRandomDate, listToMap, mapValuesToList, isEscapeKey, updateItem };
