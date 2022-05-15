@@ -5,7 +5,6 @@ import ExtraFilmListView from '../view/extra-film-list-view.js';
 import { render, RenderPosition } from '../framework/render.js';
 import { listToMap, mapValuesToList, updateItem } from '../utils/common.js';
 import FilmPresenter from './film-presenter.js';
-import PopupPresenter from './popup-presenter.js';
 import FilterPresenter from './filter-presenter.js';
 
 const MAX_FILMS_COUNT_AT_ONCE = 5;
@@ -20,21 +19,18 @@ export default class FilmListPresenter {
   #filmsById = null;
   #container = null;
   #filmPresentersByFilmId = new Map();
-  #popupPresenter = null;
   #filterPresenter = null;
 
   init = (container, filmModel) => {
     this.#container = container;
     this.#filmModel = filmModel;
     this.#filmsById = listToMap(this.#filmModel.films, (object) => object.id);
-    this.#popupPresenter = new PopupPresenter(this.#handleFilmChange);
     this.#filterPresenter = new FilterPresenter(container);
     this.#filterPresenter.init(filmModel.films);
     this.#renderFilmCardList();
   };
 
   #renderFilmCardList() {
-    this.#filmListView.setFilmCardClickHandler((filmCard) => this.#openPopup(filmCard));
     render(this.#filmListView, this.#container);
     const filmsByIdValues = mapValuesToList(this.#filmsById);
     if (filmsByIdValues.length > MAX_FILMS_COUNT_AT_ONCE) {
@@ -53,7 +49,7 @@ export default class FilmListPresenter {
 
   #renderFilm = (film, container) => {
     const filmPresenter = new FilmPresenter(container, this.#handleFilmChange);
-    filmPresenter.init(film);
+    filmPresenter.init(film, this.#filmModel.getCommentsByFilmId(film.id));
     this.#renderedFilmsCount++;
     const presenters = this.#filmPresentersByFilmId.get(film.id);
     if (presenters) {
@@ -61,12 +57,6 @@ export default class FilmListPresenter {
       return;
     }
     this.#filmPresentersByFilmId.set(film.id, [filmPresenter]);
-  };
-
-  #openPopup = (cardElement) => {
-    const film = this.#filmsById.get(cardElement.dataset.id);
-    const comments = [...this.#filmModel.getCommentsByFilmId(film.id)];
-    this.#popupPresenter.init(film, comments);
   };
 
   #renderExtraFilmList(title, films) {
@@ -94,7 +84,7 @@ export default class FilmListPresenter {
     const updatedFilms = updateItem(mapValuesToList(this.#filmsById), updatedFilm);
     this.#filmsById = listToMap(updatedFilms, (film) => film.id);
     this.#filmPresentersByFilmId.get(updatedFilm.id).forEach((presenter) => {
-      presenter.init(updatedFilm);
+      presenter.init(updatedFilm, this.#filmModel.getCommentsByFilmId(updatedFilm.id));
     });
     this.#filterPresenter.init(updatedFilms);
   };

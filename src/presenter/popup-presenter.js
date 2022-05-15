@@ -1,15 +1,18 @@
 import FilmDetailsPopupView from '../view/film-details-popup-view';
 import { isEscapeKey } from '../utils/common.js';
-import structuredClone from '@ungap/structured-clone';
 
 export default class PopupPresenter {
 
   #film = null;
-  #changeDataCallback = null;
   #comments = null;
+  #addToWatchListCallback = null;
+  #addToWatchedCallback = null;
+  #addToFavoriteCallback = null;
 
-  constructor(changeDataCallback) {
-    this.#changeDataCallback = changeDataCallback;
+  constructor(addToWatchListCallback, addToWatchedCallback, addToFavoriteCallback) {
+    this.#addToWatchListCallback = addToWatchListCallback;
+    this.#addToWatchedCallback = addToWatchedCallback;
+    this.#addToFavoriteCallback = addToFavoriteCallback;
   }
 
   init = (film, comments) => {
@@ -22,7 +25,7 @@ export default class PopupPresenter {
     this.#closePopup();
     const onPageKeyDown = (evt) => {
       if (isEscapeKey(evt)) {
-        this.closePopup();
+        this.#closePopup();
       }
     };
     const filmDetailPopupComponent = new FilmDetailsPopupView(this.#film, this.#comments);
@@ -31,9 +34,9 @@ export default class PopupPresenter {
       document.escKeyDownEvt = (evt) => onPageKeyDown(evt)
     );
     filmDetailPopupComponent.setCloseBtnClickHandler(() => this.#closePopup());
-    filmDetailPopupComponent.setAddToWatchlistBtnClickHandler(this.#handleWatchListClick);
-    filmDetailPopupComponent.setAddWatchedBtnClickHandler(this.#handleWatchedClick);
-    filmDetailPopupComponent.setAddFavoriteBtnClickHandler(this.#handleFavoriteClick);
+    filmDetailPopupComponent.setAddToWatchlistBtnClickHandler(this.#addToWatchListCallback);
+    filmDetailPopupComponent.setAddWatchedBtnClickHandler(this.#addToWatchedCallback);
+    filmDetailPopupComponent.setAddFavoriteBtnClickHandler(this.#addToFavoriteCallback);
     document.body.classList.add('hide-overflow');
     document.body.appendChild(filmDetailPopupComponent.element);
   };
@@ -45,24 +48,5 @@ export default class PopupPresenter {
     document.body.removeChild(FilmDetailsPopupView.filmDetailsElement);
     document.body.classList.remove('hide-overflow');
     document.removeEventListener('keydown', document.escKeyDownEvt);
-  };
-
-  #handleWatchedClick = () => {
-    this.#changeFilmData((film) => (film.userDetails.alreadyWatched = !film.userDetails.alreadyWatched));
-  };
-
-  #handleWatchListClick = () => {
-    this.#changeFilmData((film) => (film.userDetails.watchlist = !film.userDetails.watchlist));
-  };
-
-  #handleFavoriteClick = () => {
-    this.#changeFilmData((film) => (film.userDetails.favorite = !film.userDetails.favorite));
-  };
-
-  #changeFilmData = (changeFilmCallback) => {
-    const filmClone = structuredClone(this.#film);
-    changeFilmCallback(filmClone);
-    this.#film = filmClone;
-    this.#changeDataCallback(filmClone);
   };
 }

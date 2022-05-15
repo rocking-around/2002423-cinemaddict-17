@@ -32,13 +32,8 @@ const isEscapeKey = (evt) => (
 );
 
 const updateItem = (items, update) => {
-  console.log('update watchlist', update.userDetails.watchlist);
-  console.log('update alreadyWatched', update.userDetails.alreadyWatched);
-  console.log('update favorite', update.userDetails.favorite);
-  console.log('update watchlist', update.userDetails.watchlist);
   const index = items.findIndex((item) => item.id === update.id);
   if (index === -1) {
-    console.log('-1');
     return items;
   }
   return [
