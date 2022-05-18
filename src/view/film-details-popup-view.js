@@ -89,9 +89,9 @@ const getFilmDetailsPopupTemplate = (film, comments) => (`
         </div>
 
         <section class="film-details__controls">
-          <button type="button" class="film-details__control-button film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
-          <button type="button" class="film-details__control-button film-details__control-button--active film-details__control-button--watched" id="watched" name="watched">Already watched</button>
-          <button type="button" class="film-details__control-button film-details__control-button--favorite" id="favorite" name="favorite">Add to favorites</button>
+          <button type="button" class="film-details__control-button ${film.userDetails.watchlist ? 'film-details__control-button--active' : ''} film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
+          <button type="button" class="film-details__control-button ${film.userDetails.alreadyWatched ? 'film-details__control-button--active' : ''} film-details__control-button--watched" id="watched" name="watched">Already watched</button>
+          <button type="button" class="film-details__control-button ${film.userDetails.favorite ? 'film-details__control-button--active' : ''} film-details__control-button--favorite" id="favorite" name="favorite">Add to favorites</button>
         </section>
       </div>
 
@@ -163,5 +163,42 @@ export default class FilmDetailsPopupView extends AbstractView {
   #closeBtnClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.closeBtnClick();
+  };
+
+  setAddToWatchlistBtnClickHandler = (cb) => {
+    this._callback.addToWatchlistBtnClick = cb;
+    const watchlistElement = this.element.querySelector('#watchlist');
+    watchlistElement.addEventListener(
+      'click',
+      (evt) => this.#controlItemClickHandler(evt, watchlistElement, cb)
+    );
+  };
+
+  setAddWatchedBtnClickHandler = (cb) => {
+    this._callback.addToWatchedBtnClick = cb;
+    const alreadyWatchedElement = this.element.querySelector('#watched');
+    alreadyWatchedElement.addEventListener(
+      'click',
+      (evt) => this.#controlItemClickHandler(evt, alreadyWatchedElement, cb)
+    );
+  };
+
+  setAddFavoriteBtnClickHandler = (cb) => {
+    this._callback.addToFavoriteBtnClick = cb;
+    const favoriteElement = this.element.querySelector('#favorite');
+    favoriteElement.addEventListener(
+      'click',
+      (evt) => this.#controlItemClickHandler(evt, favoriteElement, cb)
+    );
+  };
+
+  #controlItemClickHandler = (evt, targetButton, cb) => {
+    evt.preventDefault();
+    if (targetButton.classList.contains('film-details__control-button--active')) {
+      targetButton.classList.remove('film-details__control-button--active');
+    } else {
+      targetButton.classList.add('film-details__control-button--active');
+    }
+    cb();
   };
 }

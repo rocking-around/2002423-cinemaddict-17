@@ -28,19 +28,6 @@ export default class FilmListView extends AbstractView {
     return getFilmListTemplate();
   }
 
-  setFilmCardClickHandler = (cb) => {
-    this._callback.filmCardClick = cb;
-    this.element.addEventListener('click', this.#clickHandler);
-  };
-
-  #clickHandler = (evt) => {
-    evt.preventDefault();
-    const cardLinkElement = evt.target.closest('.film-card__link');
-    if (cardLinkElement) {
-      this._callback.filmCardClick(cardLinkElement.parentElement);
-    }
-  };
-
   showEmptyFilmListMessage() {
     this.element.querySelector('.films-list__title').classList.remove('visually-hidden');
   }

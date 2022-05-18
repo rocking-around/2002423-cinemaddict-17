@@ -3,7 +3,7 @@ import { genarateRandomComments } from '../mock/comment';
 
 export default class FilmModel {
 
-  #films = Array.from({ length: 22 }, (elem, i) => generateFilm(i));
+  #films = Array.from({ length: 22 }, (elem, i) => generateFilm(i.toString()));
   #commentsByFilmId = new Map();
 
   constructor() {
