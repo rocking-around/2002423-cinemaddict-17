@@ -7,10 +7,10 @@ import { render } from './framework/render.js';
 const siteHeaderElement = document.querySelector('.header');
 const siteMainElement = document.querySelector('.main');
 const siteFooterStatisticsElement = document.querySelector('.footer .footer__statistics');
-const headerPresenter = new HeaderPresenter();
-const filmListPresenter = new FilmListPresenter();
 const filmModel = new FilmModel();
+const headerPresenter = new HeaderPresenter();
+const filmListPresenter = new FilmListPresenter(siteMainElement, filmModel);
 
 headerPresenter.init(siteHeaderElement);
-filmListPresenter.init(siteMainElement, filmModel);
+filmListPresenter.init();
 render(new FooterStatisticsView(filmModel.films.length), siteFooterStatisticsElement);

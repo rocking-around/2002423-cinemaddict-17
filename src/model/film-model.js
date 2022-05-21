@@ -1,5 +1,5 @@
-import { generateFilm } from '../mock/film';
-import { genarateRandomComments } from '../mock/comment';
+import { generateFilm } from '../mock/film.js';
+import { generateRandomComments } from '../mock/comment.js';
 
 export default class FilmModel {
 
@@ -9,7 +9,7 @@ export default class FilmModel {
   constructor() {
     this.#films.forEach((film) => {
       for (let i = 0; i < film.commentsCount; i++) {
-        this.#commentsByFilmId.set(film.id, genarateRandomComments(film.commentsCount, film.id));
+        this.#commentsByFilmId.set(film.id, generateRandomComments(film.commentsCount, film.id));
       }
     });
   }
