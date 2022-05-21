@@ -27,16 +27,16 @@ export default class FilmListPresenter {
   #filterPresenter = null;
   #currentSortType = SortType.DEFAULT;
 
-  constructor(filmModel) {
+  constructor(container, filmModel) {
+    this.#container = container;
     this.#filmModel = filmModel;
     this.#originalFilmList = [...this.#filmModel.films];
     this.#filmList = [...this.#filmModel.films];
   }
 
-  init = (container) => {
-    this.#container = container;
+  init = () => {
     this.#filmsById = listToMap(this.#filmModel.films, (object) => object.id);
-    this.#filterPresenter = new FilterPresenter(container);
+    this.#filterPresenter = new FilterPresenter(this.#container);
     this.#filterPresenter.init(this.#filmList);
     this.#renderFilmCardList();
   };
@@ -72,7 +72,6 @@ export default class FilmListPresenter {
   #renderFilm = (film, container) => {
     const filmPresenter = new FilmPresenter(container, this.#handleFilmChange);
     filmPresenter.init(film, this.#filmModel.getCommentsByFilmId(film.id));
-    this.#renderedFilmsCount++;
     const presenters = this.#filmPresentersByFilmId.get(film.id);
     if (presenters) {
       presenters.push(filmPresenter);
@@ -96,6 +95,7 @@ export default class FilmListPresenter {
     const maxPossibleCount = Math.min(films.length, this.#renderedFilmsCount + MAX_FILMS_COUNT_AT_ONCE);
     for (let i = this.#renderedFilmsCount; i < maxPossibleCount; i++) {
       this.#renderFilm(films[i], this.#filmListView.filmListContainer);
+      this.#renderedFilmsCount++;
     }
     if (this.#renderedFilmsCount === films.length) {
       this.#showMoreBtnView.element.remove();
