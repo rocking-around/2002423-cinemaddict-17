@@ -34,8 +34,8 @@ const generateComment = (filmId) => ({
   filmId: filmId
 });
 
-const genarateRandomComments = (count, filmId) => (
+const generateRandomComments = (count, filmId) => (
   Array.from({ length: count }, () => generateComment(filmId))
 );
 
-export { genarateRandomComments };
+export { generateRandomComments };
