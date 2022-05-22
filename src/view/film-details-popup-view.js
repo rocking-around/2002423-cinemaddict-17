@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeFilmReleaseDate, humanizeFilmCommentDate } from '../utils/film.js';
 
 const getGenres = (film) => (
@@ -23,7 +23,18 @@ const getComments = (comments) => (
   ).join('')
 );
 
-const getFilmDetailsPopupTemplate = (film, comments) => (`
+const getNewCommentEmojiTemplate = (emoji) => {
+  if (!emoji) {
+    return '<div class="film-details__add-emoji-label"></div>';
+  }
+  return `
+    <div style="background-image: url('./images/emoji/${emoji}.png'); background-size: cover" class="film-details__add-emoji-label">
+      <input class="film-details__add-emoji-item visually-hidden" value="${emoji}">
+    </div>
+  `;
+};
+
+const getFilmDetailsPopupTemplate = ({film, comments, emoji}) => (`
   <section class="film-details">
     <form class="film-details__inner" action="" method="get">
       <div class="film-details__top-container">
@@ -104,7 +115,7 @@ const getFilmDetailsPopupTemplate = (film, comments) => (`
           </ul>
 
           <div class="film-details__new-comment">
-            <div class="film-details__add-emoji-label"></div>
+            ${getNewCommentEmojiTemplate(emoji)}
 
             <label class="film-details__comment-label">
               <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
@@ -138,21 +149,37 @@ const getFilmDetailsPopupTemplate = (film, comments) => (`
   </section>
 `);
 
-export default class FilmDetailsPopupView extends AbstractView {
-
-  #template = null;
+export default class FilmDetailsPopupView extends AbstractStatefulView {
 
   constructor(film, comments) {
     super();
-    this.#template = getFilmDetailsPopupTemplate(film, comments);
+    this._state = this.#convertFilmToState(film, comments);
+    this.#addEmojiClickHandler();
   }
+
+  #convertFilmToState = (film, comments) => (
+    {film, comments}
+  );
+
+  #addEmojiClickHandler = () => {
+    this.element.querySelector('.film-details__emoji-list').addEventListener('click', this.#onEmojiClickEventHandler);
+  };
+
+  #onEmojiClickEventHandler = (evt) => {
+    if (evt.target.tagName === 'IMG') {
+      const inputElement = evt.target.parentElement.previousElementSibling;
+      this.updateElement({
+        ...this._state, scrollPosition: this.element.scrollTop, emoji: inputElement.value
+      });
+    }
+  };
 
   static get filmDetailsElement() {
     return document.querySelector('.film-details');
   }
 
   get template() {
-    return this.#template;
+    return getFilmDetailsPopupTemplate(this._state);
   }
 
   setCloseBtnClickHandler = (cb) => {
@@ -200,5 +227,14 @@ export default class FilmDetailsPopupView extends AbstractView {
       targetButton.classList.add('film-details__control-button--active');
     }
     cb();
+  };
+
+  _restoreHandlers = () => {
+    this.setCloseBtnClickHandler(this._callback.closeBtnClick);
+    this.setAddToWatchlistBtnClickHandler(this._callback.addToWatchlistBtnClick);
+    this.setAddWatchedBtnClickHandler(this._callback.addToWatchedBtnClick);
+    this.setAddFavoriteBtnClickHandler(this._callback.addToFavoriteBtnClick);
+    this.element.scrollTop = this._state.scrollPosition;
+    this.#addEmojiClickHandler();
   };
 }
