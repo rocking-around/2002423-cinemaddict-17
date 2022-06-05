@@ -22,7 +22,7 @@ const getCardTemplate = (film) => (`
       </p>
       <img src="./images/posters/${film.poster}" alt="" class="film-card__poster">
       <p class="film-card__description">${truncateString(film.description, MAX_DESCRIPTION_LENGTH)}</p>
-      <span class="film-card__comments">${film.commentsCount} comments</span>
+      <span class="film-card__comments">${film.comments.length} comments</span>
     </a>
     <div class="film-card__controls">
       <button class="film-card__controls-item film-card__controls-item--add-to-watchlist ${getActiveClass(film.userDetails.watchlist)}" type="button">Add to watchlist</button>

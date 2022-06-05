@@ -2,12 +2,12 @@ import { render, replace, remove } from '../framework/render.js';
 import FilmCardView from '../view/film-card-view.js';
 import PopupPresenter from './popup-presenter.js';
 import structuredClone from '@ungap/structured-clone';
+import { UserAction, UpdateType } from '../const.js';
 
 export default class FilmPresenter {
 
   #filmListContainer = null;
   #film = null;
-  #comments = null;
   #filmComponent = null;
   #changeDataCallback = null;
   #popupPresenter = null;
@@ -16,13 +16,16 @@ export default class FilmPresenter {
     this.#filmListContainer = filmListContainer;
     this.#changeDataCallback = changeDataCallback;
     this.#popupPresenter = new PopupPresenter(
-      this.#handleWatchListClick, this.#handleWatchedClick, this.#handleFavoriteClick
+      this.#handleWatchListClick,
+      this.#handleWatchedClick,
+      this.#handleFavoriteClick,
+      this.#addCommentClick,
+      this.#deleteCommentClick,
     );
   }
 
-  init = (film, comments) => {
+  init = (film) => {
     this.#film = film;
-    this.#comments = comments;
     const prevFilmComponent = this.#filmComponent;
     this.#filmComponent = new FilmCardView(this.#film);
     this.#filmComponent.setFilmCardClickHandler(this.#openPopup);
@@ -37,6 +40,9 @@ export default class FilmPresenter {
       replace(this.#filmComponent, prevFilmComponent);
     }
     remove(prevFilmComponent);
+    if (this.#popupPresenter.isOpen()) {
+      this.#openPopup();
+    }
   };
 
   #renderFilm = () => {
@@ -44,7 +50,7 @@ export default class FilmPresenter {
   };
 
   #openPopup = () => {
-    this.#popupPresenter.init(this.#film, this.#comments);
+    this.#popupPresenter.init(this.#film);
   };
 
   #handleWatchedClick = () => {
@@ -59,10 +65,22 @@ export default class FilmPresenter {
     this.#changeFilmData((film) => (film.userDetails.favorite = !film.userDetails.favorite));
   };
 
+  #addCommentClick = (comment) => {
+    this.#changeDataCallback(UserAction.ADD_COMMENT, UpdateType.PATCH, comment);
+  };
+
+  #deleteCommentClick = (comment) => {
+    this.#changeDataCallback(UserAction.DELETE_COMMENT, UpdateType.PATCH, comment);
+  };
+
   #changeFilmData = (changeFilmCallback) => {
     const filmClone = structuredClone(this.#film);
     changeFilmCallback(filmClone);
     this.#film = filmClone;
-    this.#changeDataCallback(filmClone);
+    this.#changeDataCallback(UserAction.UPDATE_FILM, UpdateType.PATCH, filmClone);
   };
+
+  destroy() {
+    remove(this.#filmComponent);
+  }
 }

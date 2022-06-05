@@ -31,16 +31,8 @@ const isEscapeKey = (evt) => (
   evt.key === 'Escape'
 );
 
-const updateItem = (items, update) => {
-  const index = items.findIndex((item) => item.id === update.id);
-  if (index === -1) {
-    return items;
-  }
-  return [
-    ...items.slice(0, index),
-    update,
-    ...items.slice(index + 1),
-  ];
-};
+const isCtrlEnterKey = (evt) => (
+  evt.ctrlKey && evt.key === 'Enter'
+);
 
-export { getRandomInteger, getRandomDate, listToMap, mapValuesToList, isEscapeKey, updateItem };
+export { getRandomInteger, getRandomDate, listToMap, mapValuesToList, isEscapeKey, isCtrlEnterKey };

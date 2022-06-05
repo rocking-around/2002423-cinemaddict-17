@@ -1,6 +1,7 @@
 import { humanizeFilmRuntime } from '../utils/film.js';
 import { getRandomInteger, getRandomDate } from '../utils/common.js';
 import { faker } from '@faker-js/faker';
+import { generateRandomComments } from './comment';
 
 const posterByTitle = new Map([
   ['Made for each other', 'made-for-each-other.png'],
@@ -99,7 +100,6 @@ export const generateFilm = (id) => {
       runtime: getRandomRuntime(),
       genres: new Set(getRandomGenres()),
       description: getRandomDescription(),
-      commentsCount: getRandomInteger(0, 20),
       director: peopleList[getRandomInteger(0, peopleList.length - 1)],
       writers: new Set(getRandomPeopleList()),
       actors: new Set(getRandomPeopleList()),
@@ -110,7 +110,8 @@ export const generateFilm = (id) => {
         alreadyWatched: Boolean(getRandomInteger(0, 1)),
         watchingDate: getRandomDate(1941, 2022),
         favorite: Boolean(getRandomInteger(0, 1))
-      }
+      },
+      comments: generateRandomComments(getRandomInteger(0, 10), id)
     }
   );
 };

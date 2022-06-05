@@ -1,5 +1,12 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
+const getNoFilmsText = (filterType) => {
+  if (!filterType) {
+    return 'There are no movies in our database';
+  }
+  return `There are no movies in our database for ${filterType} filter`;
+};
+
 const getFilmListTemplate = () => (`
   <section class="films">
     <section class="films-list">
@@ -28,7 +35,8 @@ export default class FilmListView extends AbstractView {
     return getFilmListTemplate();
   }
 
-  showEmptyFilmListMessage() {
+  showEmptyFilmListMessage(currentFilterType) {
     this.element.querySelector('.films-list__title').classList.remove('visually-hidden');
+    this.element.querySelector('.films-list__title').innerHTML = getNoFilmsText(currentFilterType);
   }
 }
