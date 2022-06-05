@@ -35,7 +35,7 @@ const getNewCommentEmojiTemplate = (emoji) => {
   `;
 };
 
-const getFilmDetailsPopupTemplate = ({film, scrollPosition, emoji, comment}) => (`
+const getFilmDetailsPopupTemplate = ({film, emoji, comment}) => (`
   <section class="film-details">
     <form class="film-details__inner" action="" method="get">
       <div class="film-details__top-container">
@@ -169,7 +169,7 @@ export default class FilmDetailsPopupView extends AbstractStatefulView {
       film,
       scrollPosition,
       emoji,
-      comment: comment
+      comment
     }
   );
 

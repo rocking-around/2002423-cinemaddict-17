@@ -24,8 +24,14 @@ export default class FilmPresenter {
     );
   }
 
-  init = (film) => {
+  init = (film, renderNeed = true) => {
     this.#film = film;
+    if (this.#popupPresenter.isOpen()) {
+      this.#openPopup();
+    }
+    if (!renderNeed) {
+      return;
+    }
     const prevFilmComponent = this.#filmComponent;
     this.#filmComponent = new FilmCardView(this.#film);
     this.#filmComponent.setFilmCardClickHandler(this.#openPopup);
@@ -40,9 +46,6 @@ export default class FilmPresenter {
       replace(this.#filmComponent, prevFilmComponent);
     }
     remove(prevFilmComponent);
-    if (this.#popupPresenter.isOpen()) {
-      this.#openPopup();
-    }
   };
 
   #renderFilm = () => {
@@ -82,5 +85,10 @@ export default class FilmPresenter {
 
   destroy() {
     remove(this.#filmComponent);
+    this.#filmComponent = null;
+  }
+
+  isDestroyed() {
+    return this.#filmComponent === null;
   }
 }

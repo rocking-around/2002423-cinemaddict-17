@@ -14,5 +14,6 @@ const filterModel = new FilterModel();
 const headerPresenter = new HeaderPresenter(siteHeaderElement, filmModel);
 const filmListPresenter = new FilmListPresenter(siteMainElement, filmModel, filterModel);
 
+headerPresenter.init();
 filmListPresenter.init();
 render(new FooterStatisticsView(filmModel.films.length), siteFooterStatisticsElement);

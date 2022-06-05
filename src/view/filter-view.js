@@ -14,7 +14,7 @@ const createFilterItemTemplate = (filter, isActive) => (`
 
 const getFilterTemplate = (filterItems, filterValue) => {
   const filterItemsTemplate = filterItems
-    .map((filter, index) => createFilterItemTemplate(filter, filter.type.VALUE === filterValue))
+    .map((filter) => createFilterItemTemplate(filter, filter.type.VALUE === filterValue))
     .join('');
   return `<nav class="main-navigation">
     ${filterItemsTemplate}
@@ -23,7 +23,6 @@ const getFilterTemplate = (filterItems, filterValue) => {
 
 export default class FilterView extends AbstractView {
 
-  // #template = null;
   #filters = null;
   #currentFilter = null;
   #filterByValue = null;
