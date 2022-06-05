@@ -1,8 +1,9 @@
-import { render, replace, remove } from '../framework/render.js';
+import {remove, render, replace} from '../framework/render.js';
+import {showAlert} from '../utils/common.js';
 import FilmCardView from '../view/film-card-view.js';
 import PopupPresenter from './popup-presenter.js';
 import structuredClone from '@ungap/structured-clone';
-import { UserAction, UpdateType } from '../const.js';
+import {FilterType, UpdateType, UserAction} from '../const.js';
 
 export default class FilmPresenter {
 
@@ -11,10 +12,12 @@ export default class FilmPresenter {
   #filmComponent = null;
   #changeDataCallback = null;
   #popupPresenter = null;
+  #filterModel = null;
 
-  constructor(filmListContainer, changeDataCallback) {
+  constructor(filmListContainer, changeDataCallback, filterModel) {
     this.#filmListContainer = filmListContainer;
     this.#changeDataCallback = changeDataCallback;
+    this.#filterModel = filterModel;
     this.#popupPresenter = new PopupPresenter(
       this.#handleWatchListClick,
       this.#handleWatchedClick,
@@ -24,13 +27,10 @@ export default class FilmPresenter {
     );
   }
 
-  init = (film, renderNeed = true) => {
+  init = (film) => {
     this.#film = film;
     if (this.#popupPresenter.isOpen()) {
       this.#openPopup();
-    }
-    if (!renderNeed) {
-      return;
     }
     const prevFilmComponent = this.#filmComponent;
     this.#filmComponent = new FilmCardView(this.#film);
@@ -56,16 +56,45 @@ export default class FilmPresenter {
     this.#popupPresenter.init(this.#film);
   };
 
+  #isValidForFilterChange = (filmAttribute, filerType) => {
+    if (filmAttribute
+      && this.#filterModel.filter === filerType
+      && this.#popupPresenter.isOpen()
+    ) {
+      showAlert(
+        `Cannot remove film from ${filerType.TEXT} list because this filter
+         is applied and popup is openned`
+      );
+      return false;
+    }
+    return true;
+  };
+
   #handleWatchedClick = () => {
-    this.#changeFilmData((film) => (film.userDetails.alreadyWatched = !film.userDetails.alreadyWatched));
+    this.#changeFilmData((film) => {
+      if (!this.#isValidForFilterChange(film.userDetails.alreadyWatched, FilterType.HISTORY)) {
+        return;
+      }
+      film.userDetails.alreadyWatched = !film.userDetails.alreadyWatched;
+    });
   };
 
   #handleWatchListClick = () => {
-    this.#changeFilmData((film) => (film.userDetails.watchlist = !film.userDetails.watchlist));
+    this.#changeFilmData((film) => {
+      if (!this.#isValidForFilterChange(film.userDetails.watchlist, FilterType.WATCHLIST)) {
+        return;
+      }
+      film.userDetails.watchlist = !film.userDetails.watchlist;
+    });
   };
 
   #handleFavoriteClick = () => {
-    this.#changeFilmData((film) => (film.userDetails.favorite = !film.userDetails.favorite));
+    this.#changeFilmData((film) => {
+      if (!this.#isValidForFilterChange(film.userDetails.favorite, FilterType.FAVORITES)) {
+        return;
+      }
+      film.userDetails.favorite = !film.userDetails.favorite;
+    });
   };
 
   #addCommentClick = (comment) => {
@@ -86,9 +115,5 @@ export default class FilmPresenter {
   destroy() {
     remove(this.#filmComponent);
     this.#filmComponent = null;
-  }
-
-  isDestroyed() {
-    return this.#filmComponent === null;
   }
 }

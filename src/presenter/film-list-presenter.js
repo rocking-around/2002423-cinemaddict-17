@@ -70,18 +70,11 @@ export default class FilmListPresenter {
   #updateSingleFilm = (film) => {
     const filtered = filter[this.#filterModel.filter.VALUE]([film]);
     const filmPresenter = this.#filmPresentersByFilmId.get(film.id);
+    filmPresenter.init(film);
     if (filtered.length === 0) {
-      filmPresenter.init(film, false);
-      if (!filmPresenter.isDestroyed()) {
-        this.#renderedFilmsCount--;
-        filmPresenter.destroy();
-        this.#onShowMoreBtnClick(this.films, 1);
-      }
-    } else {
-      if (filmPresenter.isDestroyed()) {
-        this.#renderedFilmsCount++;
-      }
-      filmPresenter.init(film);
+      this.#renderedFilmsCount--;
+      filmPresenter.destroy();
+      this.#onShowMoreBtnClick(this.films, 1);
     }
     this.#filterPresenter.init(this.#filmModel.films);
   };
@@ -118,7 +111,7 @@ export default class FilmListPresenter {
   };
 
   #renderFilm = (film, container) => {
-    const filmPresenter = new FilmPresenter(container, this.#handleViewAction);
+    const filmPresenter = new FilmPresenter(container, this.#handleViewAction, this.#filterModel);
     filmPresenter.init(film, this.#filmModel.getCommentsByFilmId(film.id));
     this.#filmPresentersByFilmId.set(film.id, filmPresenter);
   };
