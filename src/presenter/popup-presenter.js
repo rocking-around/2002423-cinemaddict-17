@@ -29,7 +29,7 @@ export default class PopupPresenter {
 
   init = (film) => {
     this.#film = film;
-    if (this.isOpen()) {
+    if (this.#isOpen) {
       this.#filmDetailPopupComponent.rerender(film);
     } else {
       this.#openPopup(film);

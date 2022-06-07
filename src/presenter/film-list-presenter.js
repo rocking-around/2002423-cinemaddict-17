@@ -4,7 +4,6 @@ import ShowMoreBtnView from '../view/show-more-btn-view';
 import { render, remove, RenderPosition } from '../framework/render.js';
 import { filter } from '../utils/filter.js';
 import FilmPresenter from './film-presenter.js';
-import FilterPresenter from './filter-presenter.js';
 import { SortType, UserAction, UpdateType } from '../const.js';
 import { sortByDate, sortByRating } from '../utils/film.js';
 
@@ -23,17 +22,16 @@ export default class FilmListPresenter {
   #filterPresenter = null;
   #currentSortType = SortType.DEFAULT;
 
-  constructor(container, filmModel, filterModel) {
+  constructor(container, filmModel, filterModel, filterPresenter) {
     this.#container = container;
     this.#filmModel = filmModel;
     this.#filterModel = filterModel;
+    this.#filterPresenter = filterPresenter;
     this.#filmModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   init = () => {
-    this.#filterPresenter = new FilterPresenter(this.#container, this.#filterModel, this.#filmModel);
-    this.#filterPresenter.init();
     this.#renderFilmCardList();
   };
 
@@ -43,7 +41,8 @@ export default class FilmListPresenter {
     const filteredFilms = filter[filterType.VALUE](films);
     if (this.#currentSortType === SortType.DATE) {
       return filteredFilms.sort(sortByDate);
-    } else if (this.#currentSortType === SortType.RATING) {
+    }
+    if (this.#currentSortType === SortType.RATING) {
       return filteredFilms.sort(sortByRating);
     }
     return filteredFilms;
@@ -76,7 +75,7 @@ export default class FilmListPresenter {
       filmPresenter.destroy();
       this.#onShowMoreBtnClick(this.films, 1);
     }
-    this.#filterPresenter.init(this.#filmModel.films);
+    this.#filterPresenter.init();
   };
 
   #updateFilmList = () => {

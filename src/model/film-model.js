@@ -52,22 +52,6 @@ export default class FilmModel extends Ovservable {
     this._notify(updateType, film);
   };
 
-  get topRatedFilms() {
-    if (this.#films.filter((film) => film.rating > 0).length > 0) {
-      return this.#films.slice().sort((a, b) => b.rating - a.rating);
-    }
-    return [];
-  }
-
-  get mostCommentedFilms() {
-    if (this.#films.filter((film) => film.comments.length > 0).length > 0) {
-      return this.#films.slice().sort((a, b) => (
-        b.comments.length - a.comments.length
-      ));
-    }
-    return [];
-  }
-
   getCommentsByFilmId(filmId) {
     const comments = this.#filmsById.get(filmId).comments;
     if (comments) {
