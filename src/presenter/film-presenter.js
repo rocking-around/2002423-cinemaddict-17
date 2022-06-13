@@ -13,12 +13,15 @@ export default class FilmPresenter {
   #changeDataCallback = null;
   #popupPresenter = null;
   #filterModel = null;
+  #filmModel = null;
 
-  constructor(filmListContainer, changeDataCallback, filterModel) {
+  constructor(filmListContainer, changeDataCallback, filterModel, filmModel) {
     this.#filmListContainer = filmListContainer;
     this.#changeDataCallback = changeDataCallback;
     this.#filterModel = filterModel;
+    this.#filmModel = filmModel;
     this.#popupPresenter = new PopupPresenter(
+      this.#filmModel,
       this.#handleWatchListClick,
       this.#handleWatchedClick,
       this.#handleFavoriteClick,
@@ -52,7 +55,8 @@ export default class FilmPresenter {
     render(this.#filmComponent, this.#filmListContainer);
   };
 
-  #openPopup = () => {
+  #openPopup = async () => {
+    this.#film.comments = await this.#filmModel.getCommentsByFilmId(this.#film.id);
     this.#popupPresenter.init(this.#film);
   };
 

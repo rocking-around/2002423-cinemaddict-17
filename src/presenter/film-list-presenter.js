@@ -6,6 +6,7 @@ import { filter } from '../utils/filter.js';
 import FilmPresenter from './film-presenter.js';
 import { SortType, UserAction, UpdateType } from '../const.js';
 import { sortByDate, sortByRating } from '../utils/film.js';
+import LoadingView from '../view/loading-view.js';
 
 const MAX_FILMS_COUNT_AT_ONCE = 5;
 
@@ -13,6 +14,7 @@ export default class FilmListPresenter {
 
   #filmListView = new FilmListView();
   #showMoreBtnView = new ShowMoreBtnView();
+  #loadingComponent = new LoadingView();
   #sortView = new SortView();
   #renderedFilmsCount = 0;
   #filmModel = null;
@@ -63,6 +65,9 @@ export default class FilmListPresenter {
       this.#updateSingleFilm(data);
     } else if (updateType === UpdateType.MAJOR) {
       this.#updateFilmList();
+    } else if (updateType === UpdateType.INIT) {
+      remove(this.#loadingComponent);
+      this.#updateFilmList();
     }
   };
 
@@ -78,12 +83,20 @@ export default class FilmListPresenter {
     this.#filterPresenter.init();
   };
 
+  #renderLoading = () => {
+    render(this.#loadingComponent, this.#container);
+  };
+
   #updateFilmList = () => {
     this.#clearFilmCardList();
     this.#renderFilmCardList();
   };
 
   #renderFilmCardList() {
+    if(!this.#filmModel.isLoaded()) {
+      this.#renderLoading();
+      return;
+    }
     render(this.#filmListView, this.#container);
     if (this.films.length > MAX_FILMS_COUNT_AT_ONCE) {
       this.#showMoreBtnView.setClickHandler(() => this.#onShowMoreBtnClick(this.films));
@@ -110,8 +123,13 @@ export default class FilmListPresenter {
   };
 
   #renderFilm = (film, container) => {
-    const filmPresenter = new FilmPresenter(container, this.#handleViewAction, this.#filterModel);
-    filmPresenter.init(film, this.#filmModel.getCommentsByFilmId(film.id));
+    const filmPresenter = new FilmPresenter(
+      container,
+      this.#handleViewAction,
+      this.#filterModel,
+      this.#filmModel
+    );
+    filmPresenter.init(film);
     this.#filmPresentersByFilmId.set(film.id, filmPresenter);
   };
 

@@ -14,23 +14,25 @@ const getUserRank = (watchedFilmsCount) => {
   return UserRank.NONE;
 };
 
-const getUserRankTemplate = (watchedFilmsCount) => (`
+const getUserRankTemplate = (watchedFilmsCount, isLoaded) => (`
   <section class="header__profile profile">
     <p class="profile__rating">${getUserRank(watchedFilmsCount)}</p>
-    <img class="profile__avatar" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
+    <img class="profile__avatar ${!isLoaded ? 'visually-hidden' : ''}" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
   </section>
 `);
 
 export default class UserRankView extends AbstractView {
 
+  #isModelLoaded = false;
   #watchedFilmsCount = null;
 
-  constructor(watchedFilmsCount) {
+  constructor(watchedFilmsCount, isModelLoaded) {
     super();
     this.#watchedFilmsCount = watchedFilmsCount;
+    this.#isModelLoaded = isModelLoaded;
   }
 
   get template() {
-    return getUserRankTemplate(this.#watchedFilmsCount);
+    return getUserRankTemplate(this.#watchedFilmsCount, this.#isModelLoaded);
   }
 }

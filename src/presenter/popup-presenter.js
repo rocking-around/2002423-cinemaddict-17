@@ -4,6 +4,7 @@ import { nanoid } from 'nanoid';
 
 export default class PopupPresenter {
 
+  #filmModel = null;
   #film = null;
   #addToWatchListCallback = null;
   #addToWatchedCallback = null;
@@ -14,12 +15,14 @@ export default class PopupPresenter {
   #isOpen = false;
 
   constructor(
+    filmModel,
     addToWatchListCallback,
     addToWatchedCallback,
     addToFavoriteCallback,
     addCommentCallback,
     deleteCommentCallback,
   ) {
+    this.#filmModel = filmModel;
     this.#addToWatchListCallback = addToWatchListCallback;
     this.#addToWatchedCallback = addToWatchedCallback;
     this.#addToFavoriteCallback = addToFavoriteCallback;

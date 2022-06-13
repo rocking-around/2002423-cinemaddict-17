@@ -1,6 +1,10 @@
 import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+dayjs.extend(duration);
 
-const humanizeFilmRuntime = (runtimeDate) => dayjs(runtimeDate).format('H[h] m[m]');
+const humanizeFilmRuntime = (minutes) => (
+  dayjs.duration(minutes, 'minutes').format('H[h] m[m]')
+);
 const humanizeFilmReleaseDate = (releaseDate) => dayjs(releaseDate).format('D MMMM YYYY');
 const humanizeFilmCommentDate = (commentDate) => dayjs(commentDate).format('YYYY/MM/DD HH:MM');
 
