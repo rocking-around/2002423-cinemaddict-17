@@ -11,13 +11,24 @@ export default class HeaderPresenter {
   constructor(container, filmModel) {
     this.#container = container;
     this.#filmModel = filmModel;
-    this.#userRankView = new UserRankView(this.#getWatchedFilmsCount());
-    render(this.#userRankView, container);
     filmModel.addObserver(this.#handleModelEvent);
   }
 
   init = () => {
-    render(this.#userRankView, this.#container);
+    if (!this.#userRankView) {
+      this.#userRankView = new UserRankView(
+        this.#filmModel.films.length,
+        this.#filmModel.isLoaded
+      );
+      render(this.#userRankView, this.#container);
+      return;
+    }
+    const oldView = this.#userRankView;
+    this.#userRankView = new UserRankView(
+      this.#getWatchedFilmsCount(),
+      this.#filmModel.isLoaded
+    );
+    replace(this.#userRankView, oldView);
   };
 
   #getWatchedFilmsCount = () => (
@@ -25,10 +36,8 @@ export default class HeaderPresenter {
   );
 
   #handleModelEvent = (updateType) => {
-    if (updateType === UpdateType.PATCH) {
-      const userRankViewPrev = this.#userRankView;
-      this.#userRankView = new UserRankView(this.#getWatchedFilmsCount());
-      replace(this.#userRankView, userRankViewPrev);
+    if (updateType === UpdateType.PATCH || updateType === UpdateType.INIT) {
+      this.init();
     }
   };
 }

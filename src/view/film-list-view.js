@@ -1,7 +1,8 @@
 import AbstractView from '../framework/view/abstract-view.js';
+import { FilterType } from '../const';
 
 const getNoFilmsText = (filterType) => {
-  if (!filterType) {
+  if (!filterType || filterType === FilterType.ALL.TEXT) {
     return 'There are no movies in our database';
   }
   return `There are no movies in our database for ${filterType} filter`;

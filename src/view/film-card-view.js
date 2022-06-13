@@ -1,4 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
+import {humanizeFilmRuntime} from '../utils/film';
 
 const MAX_DESCRIPTION_LENGTH = 139;
 
@@ -17,12 +18,12 @@ const getCardTemplate = (film) => (`
       <p class="film-card__rating">${film.rating}</p>
       <p class="film-card__info">
         <span class="film-card__year">${film.releaseDate.getFullYear()}</span>
-        <span class="film-card__duration">${film.runtime}</span>
-        <span class="film-card__genre">${film.genres[0]}</span>
+        <span class="film-card__duration">${humanizeFilmRuntime(film.runtime)}</span>
+        <span class="film-card__genre">${film.genre ? film.genre.join(' ') : ''}</span>
       </p>
-      <img src="./images/posters/${film.poster}" alt="" class="film-card__poster">
+      <img src="${film.poster}" alt="" class="film-card__poster">
       <p class="film-card__description">${truncateString(film.description, MAX_DESCRIPTION_LENGTH)}</p>
-      <span class="film-card__comments">${film.comments.length} comments</span>
+      <span class="film-card__comments">${film.commentsCount} comments</span>
     </a>
     <div class="film-card__controls">
       <button class="film-card__controls-item film-card__controls-item--add-to-watchlist ${getActiveClass(film.userDetails.watchlist)}" type="button">Add to watchlist</button>

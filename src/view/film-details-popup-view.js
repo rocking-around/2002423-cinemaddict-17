@@ -2,9 +2,14 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeFilmReleaseDate, humanizeFilmCommentDate } from '../utils/film.js';
 import he from 'he';
 
-const getGenres = (film) => (
-  Array.from(film.genres).map((genre) => `<span class="film-details__genre">${genre}</span>`).join('')
-);
+const getGenres = (film) => {
+  const genres = Array.from(film.genre).map(
+    (genre) => `<span class="film-details__genre">${genre}</span>`).join('');
+  return `<td className="film-details__term">${film.genre.length > 1 ? 'Genres' : 'Genre'}</td>
+  <td className="film-details__cell">
+    ${genres}
+  </td>`;
+};
 
 const getComments = (comments) => (
   comments.map((comment) => `
@@ -44,7 +49,7 @@ const getFilmDetailsPopupTemplate = ({film, emoji, comment}) => (`
         </div>
         <div class="film-details__info-wrap">
           <div class="film-details__poster">
-            <img class="film-details__poster-img" src="./images/posters/${film.poster}" alt="">
+            <img class="film-details__poster-img" src="${film.poster}" alt="">
 
             <p class="film-details__age">${film.ageRestriction}</p>
           </div>
@@ -87,10 +92,7 @@ const getFilmDetailsPopupTemplate = ({film, emoji, comment}) => (`
                 <td class="film-details__cell">${film.country}</td>
               </tr>
               <tr class="film-details__row">
-                <td class="film-details__term">Genres</td>
-                <td class="film-details__cell">
                   ${getGenres(film)}
-                </td>
               </tr>
             </table>
 
