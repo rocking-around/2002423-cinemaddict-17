@@ -18,7 +18,7 @@ export default class HeaderPresenter {
     if (!this.#userRankView) {
       this.#userRankView = new UserRankView(
         this.#filmModel.films.length,
-        this.#filmModel.isLoaded()
+        this.#filmModel.isLoaded
       );
       render(this.#userRankView, this.#container);
       return;
@@ -26,7 +26,7 @@ export default class HeaderPresenter {
     const oldView = this.#userRankView;
     this.#userRankView = new UserRankView(
       this.#getWatchedFilmsCount(),
-      this.#filmModel.isLoaded()
+      this.#filmModel.isLoaded
     );
     replace(this.#userRankView, oldView);
   };

@@ -19,7 +19,7 @@ export default class FilmModel extends Ovservable {
     return this.#films;
   }
 
-  isLoaded() {
+  get isLoaded() {
     return !this.#isLoading;
   }
 
@@ -77,7 +77,7 @@ export default class FilmModel extends Ovservable {
     if (!film.comments || film.comments.length === 0) {
       try {
         film.comments = (await this.#apiService.getComments(film.id))
-          .map((comment) => this.#adoptCommentToClient(film.id, comment));
+          .map((comment) => this.#adaptCommentToClient(film.id, comment));
       } catch (err) {
         film.comments = [];
       }
@@ -111,15 +111,15 @@ export default class FilmModel extends Ovservable {
     return adaptedFilm;
   };
 
-  #adoptCommentToClient = (filmId, comment) => {
-    const adoptedComment = {
+  #adaptCommentToClient = (filmId, comment) => {
+    const adaptedComment = {
       ...comment,
       emoji: comment.emotion,
       text: comment.comment,
-      filmId: filmId
+      filmId
     };
-    delete adoptedComment.emotion;
-    delete adoptedComment.comment;
-    return adoptedComment;
+    delete adaptedComment.emotion;
+    delete adaptedComment.comment;
+    return adaptedComment;
   };
 }

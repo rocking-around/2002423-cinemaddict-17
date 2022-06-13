@@ -93,7 +93,7 @@ export default class FilmListPresenter {
   };
 
   #renderFilmCardList() {
-    if(!this.#filmModel.isLoaded()) {
+    if (!this.#filmModel.isLoaded) {
       this.#renderLoading();
       return;
     }
